@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html>
 
-<head lang="en">
-    <meta charset="utf-8">
-    <title>Wiki</title>
-    <link rel="stylesheet" href="index.css" type="text/css"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
-    <script src="js/index.js"></script>
-</head>
+    <head lang="en">
+        <meta charset="utf-8">
+        <title>Wiki</title>
+        <link rel="stylesheet" href="css/index.css" type="text/css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-route.js"></script>
+    </head>
 
-<body ng-app="wikiApp">
-    
-</body>
+    <body ng-app="wikiApp">
+        <div id="wikiHeader">
+            
+        </div>
+        <!--[if lt IE 8]>
+            <div class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+        <![endif]-->
+        <div id="wikiBody"></div>
+        <div id="wikiFooter">
+            
+        </div>
+    </body>
+
+    <!-- Included components -->
+    <script src="js/index.js"></script>
+    <script src="js/articles/articles.js"></script>
+    <script src="js/error/error.js"></script>
+    <script src="js/mainPage/mainPage.js"></script>
+    <script src="js/searchResults/searchResults.js"></script>
+    <script src="js/signUp/signUp.js"></script>
 
 </html>
