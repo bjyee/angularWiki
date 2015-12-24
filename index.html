@@ -8,25 +8,24 @@
     </head>
 
     <body ng-app="wikiApp">
-        <div id="wikiHeader">
+        <div id="wikiHeader" ng-controller="wikiAppController as waCtrl" >
             <div id="headerLogo ng-hide" ng-show="1==1"></div>
-            <div id="headerSignIn" ng-controller="wikiAppController as waCtrl" ng-hide="signedIn">
+            <div id="headerSignIn" ng-hide="signedIn">
                 <form ng-submit="waCtrl.logIn()">
                     <input type="text" ng-model='waCtrl.email' size="30" placeholder="Email Address"/>
                     <input type="password" ng-model='waCtrl.password' placeholder="Password"/>
                     <input class="btn-primary" type="submit" value="Login"/>
                 </form>
             </div>
-            <div id="headerProfile" ng-show="signedIn">
+            <div id="headerProfile" class="ng-hide" ng-show="signedIn">
                 Hello {{waCred.first+" "+waCred.last}}
             </div>
         </div>
         <!--[if lt IE 8]>
             <div class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
         <![endif]-->
-        <div id="wikiBody"></div>
+        <div id="wikiBody" ng-view></div>
         <div id="wikiFooter">
-            
         </div>
     </body>
 
