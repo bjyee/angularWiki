@@ -8,3 +8,14 @@ body{
     background-color: rgba(251,0,0,0.2);
     color:#DE4848;
 }
+
+#wikiHeader{
+    padding:20px;
+}
+
+/* Header Login CSS */
+#headerSignIn{
+    position:absolute;
+    top: 20px;
+    right: 20px;
+}

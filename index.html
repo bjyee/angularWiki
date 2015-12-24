@@ -5,13 +5,21 @@
         <meta charset="utf-8">
         <title>Wiki</title>
         <link rel="stylesheet" href="css/index.css" type="text/css"/>
-        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-route.js"></script>
     </head>
 
     <body ng-app="wikiApp">
         <div id="wikiHeader">
-            
+            <div id="headerLogo ng-hide" ng-show="1==1"></div>
+            <div id="headerSignIn" ng-controller="wikiAppController as waCtrl" ng-hide="signedIn">
+                <form ng-submit="waCtrl.logIn()">
+                    <input type="text" ng-model='waCtrl.email' size="30" placeholder="Email Address"/>
+                    <input type="password" ng-model='waCtrl.password' placeholder="Password"/>
+                    <input class="btn-primary" type="submit" value="Login"/>
+                </form>
+            </div>
+            <div id="headerProfile" ng-show="signedIn">
+                Hello {{waCred.first+" "+waCred.last}}
+            </div>
         </div>
         <!--[if lt IE 8]>
             <div class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
@@ -22,6 +30,8 @@
         </div>
     </body>
 
+    <script src="js/angular/angular.js"></script>
+    <script src="js/angular/angular-route.js"></script>
     <!-- Included components -->
     <script src="js/index.js"></script>
     <script src="js/articles/articles.js"></script>
