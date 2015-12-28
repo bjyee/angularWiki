@@ -25,3 +25,26 @@ body{
     top: 20px;
     right:20px;    
 }
+
+/* Left Navigation */
+#wikiLeftNav{
+    position:absolute;
+    top: 50px;
+    left: 20px;
+    width: 200px;
+    height: auto;
+}
+
+/* Wiki Body View */
+#wikiBody{
+    position:absolute;
+    top: 50px;
+    left: 50%;
+    width: 1000px;
+    margin-left: -500px;
+}
+
+/* Footer */
+#wikiFooter{
+    
+}
