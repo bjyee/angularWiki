@@ -1,14 +1,14 @@
 <link rel="stylesheet" href="css/mainPage.css" type="text/css"/>
 
-<div class="contentWrapper">
+<div class="contentWrapper" ng-controller="mainPageController as mpCtrl">
     <div id="landingSection">
         <div id="landingImage"></div>
         <div id="landingHeader"><h1>Welcome to the Wiki</h1></div>
         <div id="landingDescription">This wiki is for me to play with Angular and get use to programming in Angular</div>
-        <div id="landingSearch">
-            <input id="landingSearchInput"/>
-            <button id="landingSearchBtn">Search</button>
-        </div>
+        <form id="landingSearch" ng-submit="mpCtrl.search()">
+            <input id="landingSearchInput" ng-model="mpCtrl.searchInput" auto-focus/>
+            <input class="btn-primary" type="submit" value="Search" id="landingSearchBtn"/>
+        </form>
     </div>
     
 </div>

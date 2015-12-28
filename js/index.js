@@ -23,6 +23,35 @@ app.controller('wikiAppController', function($scope){
     }
 });
 
+app.controller('mainPageController', function($scope, $location){
+    var mpCtrl = this;
+    
+    mpCtrl.search = function(){
+        $location.path('/search/'+mpCtrl.searchInput)
+    }
+});
+
+app.controller('searchResultsController', function($scope, $location, $routeParams){
+    var srCtrl = this;
+    $scope.params = $routeParams;
+    $scope.articles = {
+        
+    }
+});
+
+// Directive
+// This directive is suppose to help auto-focus an input
+app.directive('autoFocus', function($timeout) {
+    return {
+        restrict: 'AC',
+        link: function(_scope, _element) {
+            $timeout(function(){
+                _element[0].focus();
+            }, 0);
+        }
+    };
+});
+
 // Routes config
 app.config(function($routeProvider){
     $routeProvider
