@@ -6,7 +6,7 @@
         <div class="result" ng-repeat="result in results">
             <!-- Going to repeat this div for each of the results -->
             <a href="index.html#/article/{{result.url}}">{{result.header}}</a>
-            
         </div>
+        <div class="noResults ng-hide" ng-show="results.length == 0">There are no articles matching "{{params.searchInput}}"</div>
     </div>
 </div>

@@ -34,23 +34,29 @@ app.controller('mainPageController', function($scope, $location){
     }
 });
 
-app.controller('searchResultsController', function($scope, $location, $routeParams, articleSearch){
+app.controller('searchResultsController', function($scope, $location, $routeParams, articleFactory){
     $scope.params = $routeParams;
-    articleSearch.searchArticles($routeParams.searchInput, function(articles){
+    articleFactory.searchArticles($routeParams.searchInput, function(articles){
         $scope.results = articles;
     })
 });
 
-app.controller('articlesController', function($scope, $location, $routeParams, articleSearch){
+app.controller('articlesController', function($scope, $location, $routeParams, $sce, articleFactory, navFactory){
     $scope.params = $routeParams;
-    articleSearch.loadArticle($routeParams.articleName, function(article){
-        $scope.article = article;
-    })
+    articleFactory.loadArticle($routeParams.articleName, function(article){
+        $scope.articleHeader = $sce.trustAsHtml(article.header);
+        $scope.articleContent = $sce.trustAsHtml(article.content);
+        navFactory.navBuilder(article.content, function(list){
+            $scope.articleNav = $sce.trustAsHtml(list);
+        });
+    });
+    
+    
 });
 
 // Factory
 // This factory holds the search logic
-app.factory('articleSearch', function($http){
+app.factory('articleFactory', function($http){
     'use strict';
     var service = {};
     var data = {};
@@ -67,7 +73,7 @@ app.factory('articleSearch', function($http){
             for(article in data.articles){
                 var header = data.articles[article].header;
                 if(header.toLowerCase().indexOf(keyword.toLowerCase()) != -1){
-                    data.articles[article].url = header.toLowerCase().replace(/ /g,"_");;
+                    data.articles[article].url = header.toLowerCase().replace(/ /g,"_");
                     results.push(data.articles[article]);
                 }
             }
@@ -78,11 +84,55 @@ app.factory('articleSearch', function($http){
     }
     
     service.loadArticle = function(header, callback){
-        
+        $http({
+            url : "data/articles.json",
+            method : "GET",
+        }).then(function successCallback(response){
+            data = response.data;
+            var article = "";
+            var result = "";
+            // now I need to search using the keyword and add it to the results array
+            for(article in data.articles){
+                var dataHeader = data.articles[article].header;
+                if(dataHeader.toLowerCase() == header.toLowerCase()){
+                    result = data.articles[article];
+                }
+            }
+            callback(result);
+        }, function errorCallback(response){
+            console.log("ERROR. SHARKNADO 3: OH HELL NO")
+        })
     }
     
     return service;
-})
+});
+
+app.factory('navFactory', function(){
+    var service = {};
+    
+    service.navBuilder = function(content, callback){
+        // I need to get all the H1, H2, and H3 tags.
+        var regex = /\<h1\>(.*?)\<\/h1\>|\<h2\>(.*?)\<\/h2\>|\<h3\>(.*?)\<\/h3\>/gm;
+        var tags = "";
+        var results = "<ol>";
+        while (tags = regex.exec(content)){
+            if(tags[0].toLowerCase().indexOf("h1") != -1){
+                results += "<li class='tier1'>";    
+            }else if(tags[0].toLowerCase().indexOf("h2") != -1){
+                results += "<li class='tier2'>";
+            }else if(tags[0].toLowerCase().indexOf("h3") != -1){
+                results += "<li class='tier3'>";
+            }
+            results += "<a href=''>";
+            results += tags[1];
+            results += "</a>";
+            results += "</li>";
+        }
+        results += "</ol>"
+    }
+    
+    return service; 
+});
 
 // Directive
 // This directive is suppose to help auto-focus an input

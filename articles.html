@@ -1,6 +1,7 @@
-
-{{params}}
+<link rel="stylesheet" href="css/articles.css" type="text/css"/>
 
 <div class="contentWrapper" ng-controller="articlesController">
-    <div class="articleTitle">{{article.header}}</div>
+    <div id="articleTitle" ng-bind-html="articleHeader"></div>
+    <div id="articleNav"></div>
+    <div id="articleBody" ng-bind-html="articleContent"></div>
 </div>
