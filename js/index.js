@@ -27,17 +27,51 @@ app.controller('mainPageController', function($scope, $location){
     var mpCtrl = this;
     
     mpCtrl.search = function(){
-        $location.path('/search/'+mpCtrl.searchInput)
+        var input = mpCtrl.searchInput;
+        if(input.length > 0){
+            $location.path('/search/'+input)
+        }
     }
 });
 
-app.controller('searchResultsController', function($scope, $location, $routeParams){
+app.controller('searchResultsController', function($scope, $location, $routeParams, articleSearch){
     var srCtrl = this;
     $scope.params = $routeParams;
-    $scope.articles = {
-        
-    }
+    articleSearch.findArticles($routeParams.searchInput, function(articles){
+        $scope.results = articles;
+    })
+    
 });
+
+// Factory
+// This factory holds the search logic
+app.factory('articleSearch', function($http){
+    'use strict';
+    var service = {};
+    var data = {};
+    // normally this is a webservice call and they will return the results there.
+    service.findArticles = function(keyword, callback){
+        $http({
+            url : "data/articles.json",
+            method : "GET",
+        }).then(function successCallback(response){
+            data = response.data;
+            var results = [];
+            var article = "";
+            // now I need to search using the keyword and add it to the results array
+            for(article in data.articles){
+                if(data.articles[article].header.toLowerCase().indexOf(keyword.toLowerCase()) != -1 || data.articles[article].content.toLowerCase().indexOf(keyword.toLowerCase()) != -1){
+                    results.push(data.articles[article]);
+                }
+            }
+            callback(results);
+        }, function errorCallback(response){
+            console.log("ERROR. SHARKNADO 3: OH HELL NO")
+        })
+    }
+    
+    return service;
+})
 
 // Directive
 // This directive is suppose to help auto-focus an input
