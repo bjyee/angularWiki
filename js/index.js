@@ -35,12 +35,17 @@ app.controller('mainPageController', function($scope, $location){
 });
 
 app.controller('searchResultsController', function($scope, $location, $routeParams, articleSearch){
-    var srCtrl = this;
     $scope.params = $routeParams;
-    articleSearch.findArticles($routeParams.searchInput, function(articles){
+    articleSearch.searchArticles($routeParams.searchInput, function(articles){
         $scope.results = articles;
     })
-    
+});
+
+app.controller('articlesController', function($scope, $location, $routeParams, articleSearch){
+    $scope.params = $routeParams;
+    articleSearch.loadArticle($routeParams.articleName, function(article){
+        $scope.article = article;
+    })
 });
 
 // Factory
@@ -50,7 +55,7 @@ app.factory('articleSearch', function($http){
     var service = {};
     var data = {};
     // normally this is a webservice call and they will return the results there.
-    service.findArticles = function(keyword, callback){
+    service.searchArticles = function(keyword, callback){
         $http({
             url : "data/articles.json",
             method : "GET",
@@ -60,7 +65,9 @@ app.factory('articleSearch', function($http){
             var article = "";
             // now I need to search using the keyword and add it to the results array
             for(article in data.articles){
-                if(data.articles[article].header.toLowerCase().indexOf(keyword.toLowerCase()) != -1 || data.articles[article].content.toLowerCase().indexOf(keyword.toLowerCase()) != -1){
+                var header = data.articles[article].header;
+                if(header.toLowerCase().indexOf(keyword.toLowerCase()) != -1){
+                    data.articles[article].url = header.toLowerCase().replace(/ /g,"_");;
                     results.push(data.articles[article]);
                 }
             }
@@ -68,6 +75,10 @@ app.factory('articleSearch', function($http){
         }, function errorCallback(response){
             console.log("ERROR. SHARKNADO 3: OH HELL NO")
         })
+    }
+    
+    service.loadArticle = function(header, callback){
+        
     }
     
     return service;
