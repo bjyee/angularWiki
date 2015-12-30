@@ -45,8 +45,8 @@ app.controller('articlesController', function($scope, $location, $routeParams, $
     $scope.params = $routeParams;
     articleFactory.loadArticle($routeParams.articleName, function(article){
         $scope.articleHeader = $sce.trustAsHtml(article.header);
-        $scope.articleContent = $sce.trustAsHtml(article.content);
-        navFactory.navBuilder(article.content, function(list){
+        navFactory.navBuilder(article.content, function(list, content){
+            $scope.articleContent = $sce.trustAsHtml(content);
             $scope.articleNav = $sce.trustAsHtml(list);
         });
     });
@@ -94,7 +94,7 @@ app.factory('articleFactory', function($http){
             // now I need to search using the keyword and add it to the results array
             for(article in data.articles){
                 var dataHeader = data.articles[article].header;
-                if(dataHeader.toLowerCase() == header.toLowerCase()){
+                if(dataHeader.toLowerCase() == header.replace(/_/g," ").toLowerCase()){
                     result = data.articles[article];
                 }
             }
@@ -114,21 +114,62 @@ app.factory('navFactory', function(){
         // I need to get all the H1, H2, and H3 tags.
         var regex = /\<h1\>(.*?)\<\/h1\>|\<h2\>(.*?)\<\/h2\>|\<h3\>(.*?)\<\/h3\>/gm;
         var tags = "";
-        var results = "<ol>";
+        var results = "<b>Table of Contents</b><ul>";
+        var prev = 0;
+        var counter = 0;
         while (tags = regex.exec(content)){
-            if(tags[0].toLowerCase().indexOf("h1") != -1){
-                results += "<li class='tier1'>";    
+            if(tags[0].toLowerCase().indexOf("h1") != -1 ){
+                if(prev == 2){
+                    // if the original is h2 I need to close that one to continue adding
+                    results += "</ul>"    
+                }else if(prev == 3){
+                    // if the original is h3 I need to close that one and the h2 to continue adding
+                    results += "</ul></ul>" 
+                }
+                results += "<li class='tier1'><a href='#"+counter+"'>";
+                results += tags[1];
+                results += "</a></li>";
+                prev = 1;
+                // add anchor to content
+                var x = new RegExp(tags[0], "g")
+                content = content.replace(x, "<h1 name='"+counter+"'>"+tags[1]+"</h1>");
+                counter++;
             }else if(tags[0].toLowerCase().indexOf("h2") != -1){
-                results += "<li class='tier2'>";
+                if(prev == 3){
+                    // if the original is h3 I need to close that one to continue adding
+                    results += "</ul>"    
+                }else if(prev == 1 || prev == 0){
+                    // if the original is h1 I need to open a new OL 
+                    results += "<ul>"
+                } 
+                results += "<li class='tier2'><a href='#"+counter+"'>";
+                results += tags[2];
+                results += "</a></li>";
+                prev = 2;
+                // add anchor to content
+                var y = new RegExp(tags[0], "g")
+                content = content.replace(y, "<h2 name='"+counter+"'>"+tags[2]+"</h2>");
+                counter++;
             }else if(tags[0].toLowerCase().indexOf("h3") != -1){
-                results += "<li class='tier3'>";
+                if(prev == 1 || prev == 0){
+                    // if the original is h1 I need to open two OL
+                    results += "<ul><ul>"    
+                }else if(prev == 2){
+                    // if the original is h2 I need to open a new OL 
+                    results += "<ul>" 
+                }
+                results += "<li class='tier3'><a href='#"+counter+"'>";
+                results += tags[3];
+                results += "</a></li>";
+                prev = 3;
+                // add anchor to content
+                var z = new RegExp(tags[0], "g")
+                content = content.replace(z, "<h3 name='"+counter+"'>"+tags[3]+"</h3>");
+                counter++;
             }
-            results += "<a href=''>";
-            results += tags[1];
-            results += "</a>";
-            results += "</li>";
         }
-        results += "</ol>"
+        results += "</ul>";
+        callback(results,content);
     }
     
     return service; 
