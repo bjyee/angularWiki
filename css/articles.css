@@ -14,3 +14,14 @@
 #articleNav ul{
     padding: 5px 20px;
 }
+
+#articleNav a{
+    cursor:pointer;
+    color: blue;
+    text-decoration:underline;
+}
+
+#articleNav a:active{
+    color:red;
+    cursor:default;
+}

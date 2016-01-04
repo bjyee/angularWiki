@@ -9,7 +9,7 @@ app.controller('wikiAppController', function($scope){
         id : 1,
         first : "Brandon",
         last : "Yee",
-        email : "hi",
+        email : "brandon.yee.vendor@crowncastle.com",
         password : "abc123"
     } 
     
@@ -41,7 +41,7 @@ app.controller('searchResultsController', function($scope, $location, $routePara
     })
 });
 
-app.controller('articlesController', function($scope, $location, $routeParams, $sce, articleFactory, navFactory){
+app.controller('articlesController', function($scope, $location, $routeParams, $sce, $anchorScroll, articleFactory, navFactory){
     $scope.params = $routeParams;
     articleFactory.loadArticle($routeParams.articleName, function(article){
         $scope.articleHeader = $sce.trustAsHtml(article.header);
@@ -49,6 +49,10 @@ app.controller('articlesController', function($scope, $location, $routeParams, $
             $scope.articleContent = $sce.trustAsHtml(content);
             $scope.articleNav = $sce.trustAsHtml(list);
         });
+        $scope.scrollTo = function(id) {
+            $location.hash(id);
+            $anchorScroll();
+        }
     });
     
     
@@ -81,6 +85,10 @@ app.factory('articleFactory', function($http){
         }, function errorCallback(response){
             console.log("ERROR. SHARKNADO 3: OH HELL NO")
         })
+    }
+    
+    service.searchTags = function(keyword, callback){
+        
     }
     
     service.loadArticle = function(header, callback){
@@ -126,13 +134,13 @@ app.factory('navFactory', function(){
                     // if the original is h3 I need to close that one and the h2 to continue adding
                     results += "</ul></ul>" 
                 }
-                results += "<li class='tier1'><a href='#"+counter+"'>";
+                results += "<li><a ng-click='scrollTo("+counter+")'>";
                 results += tags[1];
                 results += "</a></li>";
                 prev = 1;
                 // add anchor to content
                 var x = new RegExp(tags[0], "g")
-                content = content.replace(x, "<h1 name='"+counter+"'>"+tags[1]+"</h1>");
+                content = content.replace(x, "<h1 id='"+counter+"'>"+tags[1]+"</h1>");
                 counter++;
             }else if(tags[0].toLowerCase().indexOf("h2") != -1){
                 if(prev == 3){
@@ -142,13 +150,13 @@ app.factory('navFactory', function(){
                     // if the original is h1 I need to open a new OL 
                     results += "<ul>"
                 } 
-                results += "<li class='tier2'><a href='#"+counter+"'>";
+                results += "<li><a ng-click='scrollTo("+counter+")'>";
                 results += tags[2];
                 results += "</a></li>";
                 prev = 2;
                 // add anchor to content
                 var y = new RegExp(tags[0], "g")
-                content = content.replace(y, "<h2 name='"+counter+"'>"+tags[2]+"</h2>");
+                content = content.replace(y, "<h2 id='"+counter+"'>"+tags[2]+"</h2>");
                 counter++;
             }else if(tags[0].toLowerCase().indexOf("h3") != -1){
                 if(prev == 1 || prev == 0){
@@ -158,13 +166,13 @@ app.factory('navFactory', function(){
                     // if the original is h2 I need to open a new OL 
                     results += "<ul>" 
                 }
-                results += "<li class='tier3'><a href='#"+counter+"'>";
+                results += "<li><a ng-click='scrollTo("+counter+")'>";
                 results += tags[3];
                 results += "</a></li>";
                 prev = 3;
                 // add anchor to content
                 var z = new RegExp(tags[0], "g")
-                content = content.replace(z, "<h3 name='"+counter+"'>"+tags[3]+"</h3>");
+                content = content.replace(z, "<h3 id='"+counter+"'>"+tags[3]+"</h3>");
                 counter++;
             }
         }
@@ -186,6 +194,20 @@ app.directive('autoFocus', function($timeout) {
             }, 0);
         }
     };
+});
+
+app.directive('compileDynamic', function($compile, $parse){
+    return {
+        link: function(scope, element, attr){
+            var parsed = $parse(attr.ngBindHtml);
+            function getStringValue() { return (parsed(scope) || '').toString(); }
+
+            //Recompile if the template changes
+            scope.$watch(getStringValue, function() {
+                $compile(element, null, -9999)(scope);  //The -9999 makes it skip directives so that we do not recompile ourselves
+            });
+        }         
+    }
 });
 
 // Routes config
@@ -211,5 +233,4 @@ app.config(function($routeProvider){
             templateUrl : 'error.html',
             controller : "errorController",
         })
-        
 });

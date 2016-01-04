@@ -24,8 +24,18 @@
         <!--[if lt IE 8]>
             <div class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
         <![endif]-->
-        <div id="wikiLeftNav">
+        <div id="wikiLeftNav" ng-controller="mainPageController as mpCtrl">
             <a href="index.html">Main Page</a>
+            <hr>
+            Categories
+            <div class="quickLinks">
+                
+            </div>
+            <hr>
+            <form id="leftNavSearch" ng-submit="mpCtrl.search()">
+                <input id="leftNavSearchInput" placeholder="Search..." ng-model="mpCtrl.searchInput"/>
+                <input class="btn-primary" type="submit" value="Search" id="leftNavSearchBtn"/>
+            </form>
         </div>
         <div id="wikiBody" ng-view></div>
         <div id="wikiFooter">

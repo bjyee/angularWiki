@@ -35,6 +35,14 @@ body{
     height: auto;
 }
 
+#leftNavSearch{
+    margin: 10px 0px;
+}
+
+#leftNavSearchInput{
+    margin: 5px 0px;
+}
+
 /* Wiki Body View */
 #wikiBody{
     position:absolute;

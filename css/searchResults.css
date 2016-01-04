@@ -2,3 +2,11 @@
     color: red;
     padding: 20px 0px;
 }
+
+#resultsBody{
+    margin:25px 0px;
+}
+
+.result{
+    margin: 20px 0px;
+}
